@@ -1483,45 +1483,48 @@ body {
 /* Mundo Mobile */
 @media (max-width: 600px) {
   .mundo-grid {
-    grid-template-columns: 1fr;
-    gap: 0;
-    border: none;
-    background: none;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
   }
   .mundo-card {
-    padding: 6px 10px;
-    gap: 6px;
-    border-bottom: 1px solid var(--border);
+    padding: 8px 10px;
+    gap: 4px;
+    flex-direction: column;
+    align-items: flex-start;
   }
   .mundo-icon {
-    font-size: 0.75rem;
-    width: 18px;
-    text-align: center;
+    display: none;
   }
   .mundo-info {
-    flex-direction: row;
     display: flex;
+    flex-direction: row;
     align-items: baseline;
     gap: 6px;
+    width: 100%;
   }
   .mundo-name {
-    font-size: 0.65rem;
-    min-width: 70px;
+    font-size: 0.6rem;
   }
   .mundo-price {
-    font-size: 0.8rem;
+    font-size: 0.85rem;
+    font-weight: 800;
   }
   .mundo-spark {
-    flex: 0 0 auto;
-    width: 50px;
-    height: 20px;
+    width: 100%;
+    height: 18px;
   }
   .mundo-change {
-    font-size: 0.65rem;
-    min-width: 50px;
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-size: 0.6rem;
+    min-width: auto;
+  }
+  .mundo-card {
+    position: relative;
   }
   .mundo-arrow {
-    font-size: 0.45rem;
+    font-size: 0.4rem;
   }
   .mundo-group-header {
     padding: 6px 10px 3px;
