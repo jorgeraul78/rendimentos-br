@@ -1,0 +1,17 @@
+{
+  "name": "rendimentos-br",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --check server.js && node --check netlify/functions/tesouro.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "Comparador de rendimentos para CDBs, fundos e títulos públicos no Brasil",
+  "dependencies": {
+    "express": "^5.2.1",
+    "node-fetch": "^2.7.0"
+  }
+}

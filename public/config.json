@@ -1,0 +1,464 @@
+{
+  "cdbs": [
+    {
+      "id": "nubank",
+      "nome": "Nubank",
+      "tipo": "CDB Liquidez Diária",
+      "rentabilidade": "100% CDI",
+      "cdi_pct": 100,
+      "logo": "NU",
+      "logo_bg": "#820ad1",
+      "ativo": true
+    },
+    {
+      "id": "inter",
+      "nome": "Inter",
+      "tipo": "CDB Liquidez Diária",
+      "rentabilidade": "100% CDI",
+      "cdi_pct": 100,
+      "logo": "IN",
+      "logo_bg": "#ff7a00",
+      "ativo": true
+    },
+    {
+      "id": "c6-bank",
+      "nome": "C6 Bank",
+      "tipo": "CDB Liquidez Diária",
+      "rentabilidade": "102% CDI",
+      "cdi_pct": 102,
+      "logo": "C6",
+      "logo_bg": "#242424",
+      "ativo": true
+    },
+    {
+      "id": "pagbank",
+      "nome": "PagBank",
+      "tipo": "CDB Liquidez Diária",
+      "rentabilidade": "100% CDI",
+      "cdi_pct": 100,
+      "logo": "PB",
+      "logo_bg": "#00a859",
+      "ativo": true
+    },
+    {
+      "id": "mercado-pago",
+      "nome": "Mercado Pago",
+      "tipo": "CDB Liquidez Diária",
+      "rentabilidade": "100% CDI",
+      "cdi_pct": 100,
+      "logo": "MP",
+      "logo_bg": "#009ee3",
+      "ativo": true
+    },
+    {
+      "id": "btg-pactual",
+      "nome": "BTG Pactual",
+      "tipo": "CDB Liquidez Diária",
+      "rentabilidade": "103% CDI",
+      "cdi_pct": 103,
+      "logo": "BT",
+      "logo_bg": "#003366",
+      "ativo": true
+    },
+    {
+      "id": "sofisa-direto",
+      "nome": "Sofisa Direto",
+      "tipo": "CDB Liquidez Diária",
+      "rentabilidade": "110% CDI",
+      "cdi_pct": 110,
+      "logo": "SD",
+      "logo_bg": "#e31937",
+      "ativo": true
+    },
+    {
+      "id": "daycoval",
+      "nome": "Daycoval",
+      "tipo": "CDB Liquidez Diária",
+      "rentabilidade": "110% CDI",
+      "cdi_pct": 110,
+      "logo": "DY",
+      "logo_bg": "#003d6b",
+      "ativo": true
+    },
+    {
+      "id": "picpay",
+      "nome": "PicPay",
+      "tipo": "CDB Liquidez Diária",
+      "rentabilidade": "102% CDI",
+      "cdi_pct": 102,
+      "logo": "PP",
+      "logo_bg": "#21c25e",
+      "ativo": true
+    },
+    {
+      "id": "neon",
+      "nome": "Neon",
+      "tipo": "CDB Liquidez Diária",
+      "rentabilidade": "100% CDI",
+      "cdi_pct": 100,
+      "logo": "NE",
+      "logo_bg": "#0091ff",
+      "ativo": true
+    },
+    {
+      "id": "will-bank",
+      "nome": "Will Bank",
+      "tipo": "CDB Liquidez Diária",
+      "rentabilidade": "100% CDI",
+      "cdi_pct": 100,
+      "logo": "WB",
+      "logo_bg": "#f5e616",
+      "ativo": true
+    },
+    {
+      "id": "iti-itau",
+      "nome": "Iti (Itaú)",
+      "tipo": "CDB Liquidez Diária",
+      "rentabilidade": "100% CDI",
+      "cdi_pct": 100,
+      "logo": "IT",
+      "logo_bg": "#ff6600",
+      "ativo": true
+    },
+    {
+      "id": "xp",
+      "nome": "XP",
+      "tipo": "CDB Liquidez Diária",
+      "rentabilidade": "100% CDI",
+      "cdi_pct": 100,
+      "logo": "XP",
+      "logo_bg": "#000000",
+      "ativo": true
+    },
+    {
+      "id": "rico",
+      "nome": "Rico",
+      "tipo": "CDB Liquidez Diária",
+      "rentabilidade": "100% CDI",
+      "cdi_pct": 100,
+      "logo": "RI",
+      "logo_bg": "#ff5700",
+      "ativo": true
+    },
+    {
+      "id": "poupanca",
+      "nome": "Poupança",
+      "tipo": "Poupança",
+      "rentabilidade": "70% Selic + TR",
+      "cdi_pct": 63,
+      "logo": "PP",
+      "logo_bg": "#1a6b3c",
+      "ativo": true
+    }
+  ],
+  "fundos": [
+    {
+      "id": "btg-tesouro-selic",
+      "nome": "BTG Pactual Tesouro Selic Simples",
+      "cnpj": "31.878.235/0001-72",
+      "entidade": "BTG Pactual",
+      "categoria": "Renda Fixa Simples",
+      "ativo": true
+    },
+    {
+      "id": "itau-rf-di",
+      "nome": "Itaú RF DI",
+      "cnpj": "00.832.424/0001-02",
+      "entidade": "Itaú Asset Management",
+      "categoria": "Renda Fixa DI",
+      "ativo": true
+    },
+    {
+      "id": "bradesco-rf-di",
+      "nome": "Bradesco RF DI",
+      "cnpj": "02.659.846/0001-30",
+      "entidade": "Bradesco Asset Management",
+      "categoria": "Renda Fixa DI",
+      "ativo": true
+    },
+    {
+      "id": "bb-rf-cp-lp",
+      "nome": "BB RF CP LP",
+      "cnpj": "04.614.446/0001-94",
+      "entidade": "BB Asset Management",
+      "categoria": "Renda Fixa Crédito Privado",
+      "ativo": true
+    },
+    {
+      "id": "santander-rf-di",
+      "nome": "Santander RF DI",
+      "cnpj": "03.056.416/0001-07",
+      "entidade": "Santander Asset Management",
+      "categoria": "Renda Fixa DI",
+      "ativo": true
+    },
+    {
+      "id": "xp-tesouro-selic",
+      "nome": "XP Tesouro Selic",
+      "cnpj": "37.412.301/0001-08",
+      "entidade": "XP Asset Management",
+      "categoria": "Renda Fixa Simples",
+      "ativo": true
+    },
+    {
+      "id": "nu-reserva-imediata",
+      "nome": "Nu Reserva Imediata",
+      "cnpj": "35.588.870/0001-44",
+      "entidade": "Nu Asset Management",
+      "categoria": "Renda Fixa Simples",
+      "ativo": true
+    },
+    {
+      "id": "inter-conservador",
+      "nome": "Inter Conservador",
+      "cnpj": "28.909.053/0001-68",
+      "entidade": "Inter Asset Management",
+      "categoria": "Renda Fixa DI",
+      "ativo": true
+    },
+    {
+      "id": "btg-cdb-plus",
+      "nome": "BTG CDB Plus",
+      "cnpj": "29.718.253/0001-40",
+      "entidade": "BTG Pactual",
+      "categoria": "Renda Fixa Crédito Privado",
+      "ativo": true
+    },
+    {
+      "id": "safra-rf-di",
+      "nome": "Safra RF DI",
+      "cnpj": "04.457.289/0001-75",
+      "entidade": "Safra Asset Management",
+      "categoria": "Renda Fixa DI",
+      "ativo": true
+    },
+    {
+      "id": "credit-suisse-rf-di",
+      "nome": "Credit Suisse RF DI",
+      "cnpj": "08.346.012/0001-63",
+      "entidade": "Credit Suisse Hedging-Griffo",
+      "categoria": "Renda Fixa DI",
+      "ativo": true
+    },
+    {
+      "id": "vinci-selecao-rf",
+      "nome": "Vinci Seleção RF",
+      "cnpj": "22.891.027/0001-51",
+      "entidade": "Vinci Partners",
+      "categoria": "Renda Fixa Crédito Privado",
+      "ativo": true
+    },
+    {
+      "id": "empiricus-cash-yield",
+      "nome": "Empiricus Cash Yield",
+      "cnpj": "36.642.189/0001-93",
+      "entidade": "Empiricus Gestão",
+      "categoria": "Renda Fixa DI",
+      "ativo": true
+    },
+    {
+      "id": "warren-renda-fixa",
+      "nome": "Warren Renda Fixa",
+      "cnpj": "32.550.789/0001-42",
+      "entidade": "Warren Asset Management",
+      "categoria": "Renda Fixa DI",
+      "ativo": true
+    },
+    {
+      "id": "trend-di-simples",
+      "nome": "Trend DI Simples",
+      "cnpj": "30.999.017/0001-07",
+      "entidade": "XP Asset Management",
+      "categoria": "Renda Fixa Simples",
+      "ativo": true
+    }
+  ],
+  "debentures": [
+    {
+      "id": "vale-debenture",
+      "codigo": "VALE14",
+      "emissor": "Vale S.A.",
+      "tipo": "DI+",
+      "spread": 1.15,
+      "vencimento": "2029-06-15",
+      "rating": "AAA",
+      "ativo": true
+    },
+    {
+      "id": "petrobras-debenture",
+      "codigo": "PETR21",
+      "emissor": "Petrobras S.A.",
+      "tipo": "IPCA+",
+      "spread": 0.85,
+      "vencimento": "2033-09-01",
+      "rating": "AAA",
+      "ativo": true
+    },
+    {
+      "id": "eletrobras-debenture",
+      "codigo": "ELET18",
+      "emissor": "Eletrobras S.A.",
+      "tipo": "IPCA+",
+      "spread": 1.05,
+      "vencimento": "2035-03-15",
+      "rating": "AAA",
+      "ativo": true
+    },
+    {
+      "id": "raizen-debenture",
+      "codigo": "RAIZ11",
+      "emissor": "Raízen S.A.",
+      "tipo": "DI+",
+      "spread": 1.40,
+      "vencimento": "2029-04-01",
+      "rating": "AAA",
+      "ativo": true
+    },
+    {
+      "id": "suzano-debenture",
+      "codigo": "SUZB17",
+      "emissor": "Suzano S.A.",
+      "tipo": "DI+",
+      "spread": 1.25,
+      "vencimento": "2030-07-15",
+      "rating": "AAA",
+      "ativo": true
+    },
+    {
+      "id": "jbs-debenture",
+      "codigo": "JBSS23",
+      "emissor": "JBS S.A.",
+      "tipo": "DI+",
+      "spread": 1.80,
+      "vencimento": "2029-11-01",
+      "rating": "AA+",
+      "ativo": true
+    },
+    {
+      "id": "klabin-debenture",
+      "codigo": "KLBN19",
+      "emissor": "Klabin S.A.",
+      "tipo": "IPCA+",
+      "spread": 1.10,
+      "vencimento": "2032-05-15",
+      "rating": "AAA",
+      "ativo": true
+    },
+    {
+      "id": "ccr-debenture",
+      "codigo": "CCRO15",
+      "emissor": "CCR S.A.",
+      "tipo": "DI+",
+      "spread": 1.50,
+      "vencimento": "2031-02-01",
+      "rating": "AA+",
+      "ativo": true
+    },
+    {
+      "id": "rumo-debenture",
+      "codigo": "RUMO12",
+      "emissor": "Rumo S.A.",
+      "tipo": "DI+",
+      "spread": 1.65,
+      "vencimento": "2030-08-15",
+      "rating": "AA+",
+      "ativo": true
+    },
+    {
+      "id": "energisa-debenture",
+      "codigo": "ENGI16",
+      "emissor": "Energisa S.A.",
+      "tipo": "IPCA+",
+      "spread": 0.95,
+      "vencimento": "2034-01-15",
+      "rating": "AAA",
+      "ativo": true
+    },
+    {
+      "id": "equatorial-debenture",
+      "codigo": "EQTL20",
+      "emissor": "Equatorial Energia S.A.",
+      "tipo": "DI+",
+      "spread": 1.30,
+      "vencimento": "2031-06-01",
+      "rating": "AAA",
+      "ativo": true
+    },
+    {
+      "id": "cpfl-debenture",
+      "codigo": "CPFL14",
+      "emissor": "CPFL Energia S.A.",
+      "tipo": "IPCA+",
+      "spread": 0.90,
+      "vencimento": "2033-12-15",
+      "rating": "AAA",
+      "ativo": true
+    },
+    {
+      "id": "sabesp-debenture",
+      "codigo": "SBSP18",
+      "emissor": "Sabesp S.A.",
+      "tipo": "DI+",
+      "spread": 1.20,
+      "vencimento": "2032-09-01",
+      "rating": "AAA",
+      "ativo": true
+    },
+    {
+      "id": "brf-debenture",
+      "codigo": "BRFS16",
+      "emissor": "BRF S.A.",
+      "tipo": "DI+",
+      "spread": 2.10,
+      "vencimento": "2028-03-15",
+      "rating": "AA",
+      "ativo": true
+    },
+    {
+      "id": "localiza-debenture",
+      "codigo": "RENT22",
+      "emissor": "Localiza S.A.",
+      "tipo": "DI+",
+      "spread": 1.35,
+      "vencimento": "2030-10-01",
+      "rating": "AAA",
+      "ativo": true
+    },
+    {
+      "id": "movida-debenture",
+      "codigo": "MOVI13",
+      "emissor": "Movida S.A.",
+      "tipo": "DI+",
+      "spread": 2.25,
+      "vencimento": "2028-06-15",
+      "rating": "AA",
+      "ativo": true
+    },
+    {
+      "id": "mrv-debenture",
+      "codigo": "MRVE11",
+      "emissor": "MRV Engenharia S.A.",
+      "tipo": "DI+",
+      "spread": 2.50,
+      "vencimento": "2027-12-01",
+      "rating": "AA",
+      "ativo": true
+    },
+    {
+      "id": "rede-dor-debenture",
+      "codigo": "RDOR17",
+      "emissor": "Rede D'Or São Luiz S.A.",
+      "tipo": "DI+",
+      "spread": 1.45,
+      "vencimento": "2031-04-15",
+      "rating": "AAA",
+      "ativo": true
+    }
+  ],
+  "benchmarks": {
+    "selic_meta": 14.75,
+    "cdi_anual": 14.65,
+    "ipca_12m": 5.06,
+    "poupanca_anual": 7.56
+  }
+}

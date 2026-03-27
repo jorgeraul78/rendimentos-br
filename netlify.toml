@@ -1,0 +1,43 @@
+[build]
+  publish = "public"
+  functions = "netlify/functions"
+
+[[redirects]]
+  from = "/api/tesouro"
+  to = "/.netlify/functions/tesouro"
+  status = 200
+
+[[redirects]]
+  from = "/api/bcb"
+  to = "/.netlify/functions/bcb"
+  status = 200
+
+[[redirects]]
+  from = "/api/fundos"
+  to = "/.netlify/functions/fundos"
+  status = 200
+
+[[redirects]]
+  from = "/api/mundo"
+  to = "/.netlify/functions/mundo"
+  status = 200
+
+[[redirects]]
+  from = "/api/hot-movers"
+  to = "/.netlify/functions/hot-movers"
+  status = 200
+
+[[redirects]]
+  from = "/api/cotacoes"
+  to = "/.netlify/functions/cotacoes"
+  status = 200
+
+[[redirects]]
+  from = "/api/news"
+  to = "/.netlify/functions/news"
+  status = 200
+
+[[redirects]]
+  from = "/api/config"
+  to = "/config.json"
+  status = 200
