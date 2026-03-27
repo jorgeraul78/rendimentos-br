@@ -154,122 +154,82 @@
   "fundos": [
     {
       "id": "btg-tesouro-selic",
-      "nome": "BTG Pactual Tesouro Selic Simples",
-      "cnpj": "31.878.235/0001-72",
+      "nome": "BTG Tesouro Selic Simples",
+      "cnpj": "37927707000158",
       "entidade": "BTG Pactual",
       "categoria": "Renda Fixa Simples",
       "ativo": true
     },
     {
-      "id": "itau-rf-di",
-      "nome": "Itaú RF DI",
-      "cnpj": "00.832.424/0001-02",
-      "entidade": "Itaú Asset Management",
-      "categoria": "Renda Fixa DI",
-      "ativo": true
-    },
-    {
-      "id": "bradesco-rf-di",
-      "nome": "Bradesco RF DI",
-      "cnpj": "02.659.846/0001-30",
-      "entidade": "Bradesco Asset Management",
-      "categoria": "Renda Fixa DI",
-      "ativo": true
-    },
-    {
-      "id": "bb-rf-cp-lp",
-      "nome": "BB RF CP LP",
-      "cnpj": "04.614.446/0001-94",
-      "entidade": "BB Asset Management",
-      "categoria": "Renda Fixa Crédito Privado",
-      "ativo": true
-    },
-    {
-      "id": "santander-rf-di",
-      "nome": "Santander RF DI",
-      "cnpj": "03.056.416/0001-07",
-      "entidade": "Santander Asset Management",
-      "categoria": "Renda Fixa DI",
-      "ativo": true
-    },
-    {
-      "id": "xp-tesouro-selic",
-      "nome": "XP Tesouro Selic",
-      "cnpj": "37.412.301/0001-08",
-      "entidade": "XP Asset Management",
+      "id": "trend-di-simples",
+      "nome": "Trend DI Simples",
+      "cnpj": "32893503000120",
+      "entidade": "XP Asset",
       "categoria": "Renda Fixa Simples",
       "ativo": true
     },
     {
       "id": "nu-reserva-imediata",
       "nome": "Nu Reserva Imediata",
-      "cnpj": "35.588.870/0001-44",
-      "entidade": "Nu Asset Management",
+      "cnpj": "42699466000177",
+      "entidade": "Nu Asset",
+      "categoria": "Renda Fixa Ref DI",
+      "ativo": true
+    },
+    {
+      "id": "xp-tesouro-selic",
+      "nome": "XP Tesouro Selic Simples",
+      "cnpj": "41745133000174",
+      "entidade": "XP Allocation",
       "categoria": "Renda Fixa Simples",
+      "ativo": true
+    },
+    {
+      "id": "itau-personnalite-di",
+      "nome": "Itaú Personnalité RF Ref DI",
+      "cnpj": "04700116000194",
+      "entidade": "Itaú Asset",
+      "categoria": "Renda Fixa Ref DI",
+      "ativo": true
+    },
+    {
+      "id": "bradesco-rf-simples",
+      "nome": "Bradesco RF Simples Automático",
+      "cnpj": "07667259000130",
+      "entidade": "Bradesco Asset",
+      "categoria": "Renda Fixa Simples",
+      "ativo": true
+    },
+    {
+      "id": "bradesco-hiperfundo",
+      "nome": "Bradesco Hiperfundo RF Ref DI",
+      "cnpj": "03766575000108",
+      "entidade": "Bradesco Asset",
+      "categoria": "Renda Fixa Ref DI",
+      "ativo": true
+    },
+    {
+      "id": "bb-rf-lp-high",
+      "nome": "BB RF LP High Estilo",
+      "cnpj": "29224634000100",
+      "entidade": "BB Asset",
+      "categoria": "Renda Fixa LP",
       "ativo": true
     },
     {
       "id": "inter-conservador",
-      "nome": "Inter Conservador",
-      "cnpj": "28.909.053/0001-68",
-      "entidade": "Inter Asset Management",
-      "categoria": "Renda Fixa DI",
+      "nome": "Inter Conservador RF CP",
+      "cnpj": "20879578000177",
+      "entidade": "Inter Asset",
+      "categoria": "Renda Fixa CP",
       "ativo": true
     },
     {
-      "id": "btg-cdb-plus",
-      "nome": "BTG CDB Plus",
-      "cnpj": "29.718.253/0001-40",
-      "entidade": "BTG Pactual",
-      "categoria": "Renda Fixa Crédito Privado",
-      "ativo": true
-    },
-    {
-      "id": "safra-rf-di",
-      "nome": "Safra RF DI",
-      "cnpj": "04.457.289/0001-75",
-      "entidade": "Safra Asset Management",
-      "categoria": "Renda Fixa DI",
-      "ativo": true
-    },
-    {
-      "id": "credit-suisse-rf-di",
-      "nome": "Credit Suisse RF DI",
-      "cnpj": "08.346.012/0001-63",
-      "entidade": "Credit Suisse Hedging-Griffo",
-      "categoria": "Renda Fixa DI",
-      "ativo": true
-    },
-    {
-      "id": "vinci-selecao-rf",
-      "nome": "Vinci Seleção RF",
-      "cnpj": "22.891.027/0001-51",
-      "entidade": "Vinci Partners",
-      "categoria": "Renda Fixa Crédito Privado",
-      "ativo": true
-    },
-    {
-      "id": "empiricus-cash-yield",
-      "nome": "Empiricus Cash Yield",
-      "cnpj": "36.642.189/0001-93",
-      "entidade": "Empiricus Gestão",
-      "categoria": "Renda Fixa DI",
-      "ativo": true
-    },
-    {
-      "id": "warren-renda-fixa",
-      "nome": "Warren Renda Fixa",
-      "cnpj": "32.550.789/0001-42",
-      "entidade": "Warren Asset Management",
-      "categoria": "Renda Fixa DI",
-      "ativo": true
-    },
-    {
-      "id": "trend-di-simples",
-      "nome": "Trend DI Simples",
-      "cnpj": "30.999.017/0001-07",
-      "entidade": "XP Asset Management",
-      "categoria": "Renda Fixa Simples",
+      "id": "safra-soberano-di",
+      "nome": "Safra Soberano DI",
+      "cnpj": "10347184000114",
+      "entidade": "Safra Asset",
+      "categoria": "Renda Fixa Ref DI",
       "ativo": true
     }
   ],

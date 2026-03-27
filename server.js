@@ -56,6 +56,18 @@ app.get('/api/config', (req, res) => {
   res.json(readConfig());
 });
 
+// --- Fundos (CVM proxy) ---
+app.get('/api/fundos', async (req, res) => {
+  try {
+    const fundosFn = require('./netlify/functions/fundos');
+    const result = await fundosFn.handler({ queryStringParameters: req.query });
+    res.status(result.statusCode).json(JSON.parse(result.body));
+  } catch (err) {
+    console.error('Fundos proxy error:', err.message);
+    res.status(502).json({ error: 'Failed to fetch fundos data' });
+  }
+});
+
 // --- Tesouro Direto API ---
 app.get('/api/tesouro', async (req, res) => {
   try {

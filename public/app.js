@@ -314,35 +314,77 @@ function renderRendimentosChart(items, containerId) {
 
 async function loadFundos() {
   const container = document.getElementById('fundos-list');
-  container.innerHTML = `<div class="loading"><div class="loading-spinner"></div><p>Carregando fundos...</p></div>`;
+  container.innerHTML = `<div class="loading"><div class="loading-spinner"></div><p>Carregando fundos da CVM...</p></div>`;
 
   try {
     const config = await fetch('/api/config').then(r => r.json());
     const fundos = config.fundos.filter(f => f.ativo);
 
-    // For now, show configured funds with placeholder data
-    // In production, this would fetch from CVM informe diário
-    container.innerHTML = '';
     if (fundos.length === 0) {
       container.innerHTML = '<div class="loading">Nenhum fundo disponível.</div>';
       return;
     }
 
-    fundos.forEach(fundo => {
+    // Fetch real data from CVM
+    const cnpjs = fundos.map(f => f.cnpj).join(',');
+    const cvmRes = await fetch(`/api/fundos?cnpjs=${cnpjs}`).then(r => r.ok ? r.json() : { data: [] }).catch(() => ({ data: [] }));
+
+    // Build lookup by CNPJ
+    const cvmMap = {};
+    for (const item of (cvmRes.data || [])) {
+      cvmMap[item.cnpj] = item;
+    }
+
+    // Merge config with CVM data
+    const items = fundos.map(fundo => {
+      const cvm = cvmMap[fundo.cnpj];
+      return {
+        ...fundo,
+        rendAnual: cvm ? cvm.rendAnual : null,
+        rendMensal: cvm ? cvm.rendMensal : null,
+        quota: cvm ? cvm.quota : null,
+        pl: cvm ? cvm.pl : null,
+        cotistas: cvm ? cvm.cotistas : null,
+        dataUltima: cvm ? cvm.dataUltima : null,
+      };
+    });
+
+    // Sort by annual return (funds with data first, then by rendAnual desc)
+    items.sort((a, b) => {
+      if (a.rendAnual != null && b.rendAnual == null) return -1;
+      if (a.rendAnual == null && b.rendAnual != null) return 1;
+      return (b.rendAnual || 0) - (a.rendAnual || 0);
+    });
+
+    container.innerHTML = '';
+    items.forEach(fundo => {
+      const rateStr = fundo.rendAnual != null ? `${fundo.rendAnual.toFixed(2)}%` : '—';
+      const dateStr = fundo.dataUltima ? `Cota em ${fundo.dataUltima}` : 'Dados da CVM';
+      const plStr = fundo.pl ? formatPatrimonio(fundo.pl) : '';
+      const tags = [{ text: fundo.categoria, type: 'category' }];
+      if (plStr) tags.push({ text: `PL: ${plStr}`, type: '' });
+      if (fundo.cotistas) tags.push({ text: `${fundo.cotistas.toLocaleString('pt-BR')} cotistas`, type: '' });
+
       const card = createCard({
         logo: fundo.entidade.substring(0, 2).toUpperCase(),
         logoBg: stringToColor(fundo.entidade),
         name: fundo.nome,
         entity: fundo.entidade,
-        tags: [
-          { text: fundo.categoria, type: 'category' },
-        ],
-        rate: '—',
+        tags,
+        rate: rateStr,
         rateLabel: 'Rend. anual',
-        rateDate: 'Dados da CVM'
+        rateDate: dateStr
       });
       container.appendChild(card);
     });
+
+    // Show source info
+    if (cvmRes.month) {
+      const sourceP = document.createElement('p');
+      sourceP.className = 'section-source';
+      sourceP.textContent = `Fonte: CVM Informe Diário (${cvmRes.month}). Rentabilidade anualizada (base 252 dias úteis).`;
+      container.appendChild(sourceP);
+    }
   } catch (e) {
     console.error('Error loading fundos:', e);
     container.innerHTML = '<div class="loading">Erro ao carregar fundos.</div>';
