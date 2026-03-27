@@ -892,6 +892,7 @@ async function loadMundo() {
 
   try {
     const res = await fetch('/api/mundo');
+    if (!res.ok) throw new Error(`API error: ${res.status}`);
     const { data } = await res.json();
 
     if (!data || data.length === 0) {
@@ -899,65 +900,117 @@ async function loadMundo() {
       return;
     }
 
-    // Group by category
-    const groups = {};
+    grid.innerHTML = '';
+
+    // Group items by category (preserving API order)
+    const groups = [];
+    const groupMap = {};
     data.forEach(item => {
-      if (!groups[item.group]) groups[item.group] = [];
-      groups[item.group].push(item);
+      if (item.price === null) return;
+      const g = item.group || 'Outros';
+      if (!groupMap[g]) { groupMap[g] = []; groups.push(g); }
+      groupMap[g].push(item);
     });
 
-    grid.innerHTML = Object.entries(groups).map(([group, items]) => `
-      <div class="mundo-group">
-        <h3 class="mundo-group-title">${group}</h3>
-        <div class="mundo-group-items">
-          ${items.map(item => {
-            const isUp = item.change > 0;
-            const isDown = item.change < 0;
-            const changeClass = isUp ? 'positive' : isDown ? 'negative' : '';
-            const changeStr = item.change != null ? `${isUp ? '+' : ''}${item.change.toFixed(2)}%` : '—';
-            const priceStr = item.price != null ? formatMundoPrice(item.price) : '—';
-            const sparkHtml = item.sparkline && item.sparkline.length > 1 ? renderSparkline(item.sparkline, isUp) : '';
+    groups.forEach(groupName => {
+      const header = document.createElement('div');
+      header.className = 'mundo-group-header';
+      header.textContent = groupName;
+      grid.appendChild(header);
 
-            return `<div class="mundo-item" data-id="${item.id}">
-              <div class="mundo-item-top">
-                <span class="mundo-item-name">${item.name}</span>
-                <span class="mundo-item-change ${changeClass}">${changeStr}</span>
-              </div>
-              <div class="mundo-item-bottom">
-                <span class="mundo-item-price">${priceStr}</span>
-                ${sparkHtml}
-              </div>
-            </div>`;
-          }).join('')}
-        </div>
-      </div>
-    `).join('');
+      groupMap[groupName].forEach(item => {
+        const isRate = item.group === 'Taxas';
+        const isUp = item.change >= 0;
+        const changeColor = isUp ? 'var(--green)' : 'var(--red)';
+        const arrow = isUp ? '▲' : '▼';
 
-    const source = document.getElementById('mundo-source');
-    if (source) source.textContent = 'Fonte: Yahoo Finance';
+        let priceStr;
+        if (isRate) {
+          priceStr = item.price.toFixed(3) + '%';
+        } else if (item.price >= 10000) {
+          priceStr = item.price.toLocaleString('pt-BR', { maximumFractionDigits: 0 });
+        } else if (item.price >= 100) {
+          priceStr = item.price.toLocaleString('pt-BR', { maximumFractionDigits: 2 });
+        } else {
+          priceStr = item.price.toLocaleString('pt-BR', { maximumFractionDigits: 4 });
+        }
+
+        const canvasId = `spark-${item.id}`;
+        const card = document.createElement('div');
+        card.className = 'mundo-card';
+        card.innerHTML = `
+          <div class="mundo-icon">${item.icon}</div>
+          <div class="mundo-info">
+            <div class="mundo-name">${item.name}</div>
+            <div class="mundo-price">${priceStr}</div>
+          </div>
+          <div class="mundo-spark"><canvas id="${canvasId}" width="60" height="24"></canvas></div>
+          <div class="mundo-change" style="color:${changeColor}">
+            <span class="mundo-arrow">${arrow}</span>
+            <span>${Math.abs(item.change).toFixed(2)}%</span>
+          </div>
+        `;
+        grid.appendChild(card);
+
+        if (item.sparkline && item.sparkline.length > 1) {
+          drawSparkline(canvasId, item.sparkline, isUp);
+        }
+      });
+    });
+
+    const src = document.getElementById('mundo-source');
+    if (src) src.textContent = '';
   } catch (e) {
     console.error('Error loading Mundo:', e);
     grid.innerHTML = '<div class="loading">Erro ao carregar dados do mercado.</div>';
   }
 }
 
-function formatMundoPrice(price) {
-  if (price >= 10000) return Math.round(price).toLocaleString('pt-BR');
-  if (price >= 100) return price.toFixed(2);
-  if (price >= 1) return price.toFixed(2);
-  return price.toFixed(4);
-}
+function drawSparkline(canvasId, data, isUp) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const w = canvas.clientWidth;
+  const h = canvas.clientHeight;
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  ctx.scale(dpr, dpr);
 
-function renderSparkline(data, isUp) {
-  if (!data || data.length < 2) return '';
-  const w = 60, h = 20;
   const min = Math.min(...data);
   const max = Math.max(...data);
   const range = max - min || 1;
-  const step = w / (data.length - 1);
-  const points = data.map((v, i) => `${(i * step).toFixed(1)},${(h - ((v - min) / range) * h).toFixed(1)}`).join(' ');
-  const color = isUp ? 'var(--green)' : 'var(--red)';
-  return `<svg class="mundo-sparkline" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}"><polyline points="${points}" fill="none" stroke="${color}" stroke-width="1.5"/></svg>`;
+  const pad = 2;
+
+  const color = isUp ? getComputedStyle(document.documentElement).getPropertyValue('--green').trim()
+                     : getComputedStyle(document.documentElement).getPropertyValue('--red').trim();
+
+  ctx.beginPath();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 1.5;
+  ctx.lineJoin = 'round';
+
+  let lastX, lastY;
+  for (let i = 0; i < data.length; i++) {
+    const x = (i / (data.length - 1)) * (w - pad * 2) + pad;
+    const y = h - pad - ((data[i] - min) / range) * (h - pad * 2);
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+    lastX = x;
+    lastY = y;
+  }
+  ctx.stroke();
+
+  // Pulsing dot at the end
+  const parent = canvas.parentElement;
+  parent.style.position = 'relative';
+  const dot = document.createElement('div');
+  dot.className = 'spark-dot';
+  dot.style.left = (lastX / w * 100) + '%';
+  dot.style.top = (lastY / h * 100) + '%';
+  dot.style.background = color;
+  dot.style.boxShadow = `0 0 6px ${color}`;
+  parent.appendChild(dot);
 }
 
 // ─── Hot US Movers ───
