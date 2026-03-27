@@ -961,7 +961,7 @@ async function loadMundo() {
             <span>${Math.abs(item.change).toFixed(2)}%</span>
           </div>
         `;
-        grid.appendChild(card);
+        container.appendChild(card);
 
         if (item.sparkline && item.sparkline.length > 1) {
           drawSparkline(canvasId, item.sparkline, isUp);
