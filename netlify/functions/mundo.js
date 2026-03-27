@@ -5,7 +5,6 @@ const SYMBOLS = [
   // Índices
   { id: 'spx', symbol: 'ES%3DF', name: 'S&P 500', icon: '📈', group: 'Índices' },
   { id: 'nasdaq', symbol: 'NQ%3DF', name: 'Nasdaq 100', icon: '💻', group: 'Índices' },
-  { id: 'dow', symbol: 'YM%3DF', name: 'Dow Jones', icon: '🏦', group: 'Índices' },
   { id: 'ibov', symbol: '%5EBVSP', name: 'Ibovespa', icon: '🇧🇷', group: 'Índices' },
   // Taxas
   { id: 'tnx', symbol: '%5ETNX', name: 'UST 10Y', icon: '🇺🇸', group: 'Taxas' },
