@@ -1385,14 +1385,17 @@ body {
 
 /* Mundo Monitor */
 .mundo-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  display: flex;
   gap: 1px;
   background: var(--border);
   border: 1px solid var(--border);
 }
+.mundo-col {
+  flex: 1;
+  min-width: 0;
+  background: var(--bg);
+}
 .mundo-group-header {
-  grid-column: 1 / -1;
   font-size: 0.6rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -1480,54 +1483,58 @@ body {
   font-size: 0.55rem;
 }
 
-/* Mundo Mobile */
+/* Mundo Mobile — two-column group layout */
 @media (max-width: 600px) {
   .mundo-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    border: none;
+    background: none;
+  }
+  .mundo-grid .mundo-col {
+    flex: 1 1 50%;
+    min-width: 0;
+    border: 1px solid var(--border);
   }
   .mundo-card {
-    padding: 8px 10px;
+    padding: 5px 8px;
     gap: 4px;
-    flex-direction: column;
-    align-items: flex-start;
+    border-bottom: 1px solid var(--border-light);
   }
   .mundo-icon {
-    display: none;
+    font-size: 0.65rem;
+    width: 16px;
+    text-align: center;
   }
   .mundo-info {
-    display: flex;
     flex-direction: row;
+    display: flex;
     align-items: baseline;
-    gap: 6px;
-    width: 100%;
+    gap: 4px;
   }
   .mundo-name {
-    font-size: 0.6rem;
+    font-size: 0.58rem;
+    min-width: 0;
   }
   .mundo-price {
-    font-size: 0.85rem;
-    font-weight: 800;
+    font-size: 0.75rem;
   }
   .mundo-spark {
-    width: 100%;
-    height: 18px;
+    flex: 0 0 auto;
+    width: 36px;
+    height: 16px;
   }
   .mundo-change {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    font-size: 0.6rem;
-    min-width: auto;
-  }
-  .mundo-card {
-    position: relative;
+    font-size: 0.58rem;
+    min-width: 42px;
   }
   .mundo-arrow {
     font-size: 0.4rem;
   }
   .mundo-group-header {
-    padding: 6px 10px 3px;
+    padding: 5px 8px 2px;
+    font-size: 0.5rem;
     font-size: 0.5rem;
     border: none;
   }
