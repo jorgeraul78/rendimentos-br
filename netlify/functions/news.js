@@ -1,7 +1,7 @@
 // Google News Brasil — Brazilian financial news RSS proxy
 const https = require('https');
 
-const RSS_URL = 'https://news.google.com/rss/search?q=mercado+financeiro+brasil&hl=pt-BR&gl=BR&ceid=BR:pt-419';
+const RSS_URL = 'https://news.google.com/rss/search?q=when:6h+Bovespa+OR+Ibovespa+OR+Selic+OR+%22mercado+financeiro%22+OR+%22bolsa+de+valores%22+OR+real+OR+d%C3%B3lar+OR+ipca+OR+tesouro+OR+bitcoin&hl=pt-BR&gl=BR&ceid=BR:pt-419';
 
 function fetchRSS() {
   return new Promise((resolve, reject) => {
@@ -73,7 +73,7 @@ exports.handler = async () => {
     return {
       statusCode: 200,
       headers,
-      body: JSON.stringify({ items, updated: new Date().toISOString() }),
+      body: JSON.stringify({ data: items, updated: new Date().toISOString() }),
     };
   } catch (e) {
     return { statusCode: 500, body: JSON.stringify({ error: e.message }) };
