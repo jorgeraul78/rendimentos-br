@@ -1,4 +1,4 @@
-const CACHE_NAME = 'rendimentos-br-v1';
+const CACHE_NAME = 'rendimentos-br-v2';
 const ASSETS = ['/', '/styles.css', '/app.js', '/manifest.json'];
 
 self.addEventListener('install', (e) => {
