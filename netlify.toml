@@ -2,6 +2,15 @@
   publish = "public"
   functions = "netlify/functions"
 
+[functions]
+  node_bundler = "esbuild"
+
+[functions."fundos"]
+  timeout = 26
+
+[functions."fundos-historico"]
+  timeout = 26
+
 [[redirects]]
   from = "/api/tesouro"
   to = "/.netlify/functions/tesouro"
@@ -35,6 +44,11 @@
 [[redirects]]
   from = "/api/news"
   to = "/.netlify/functions/news"
+  status = 200
+
+[[redirects]]
+  from = "/api/fundos-historico"
+  to = "/.netlify/functions/fundos-historico"
   status = 200
 
 [[redirects]]
