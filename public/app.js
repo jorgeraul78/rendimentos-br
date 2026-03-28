@@ -1,7 +1,70 @@
 // ─── Rendimentos BR — Main App ───
 
+// ─── Global: Inflation data for real-rate toggle ───
+let _inflationData = null;
+let _showReal = false;
+
+async function loadInflationData() {
+  try {
+    const res = await fetch('/api/inflacao');
+    if (res.ok) {
+      _inflationData = await res.json();
+      console.log('IPCA loaded:', _inflationData.acum12m + '% (12m)');
+    } else {
+      console.warn('Inflacao endpoint returned', res.status);
+    }
+  } catch (e) {
+    console.warn('Could not load inflation data:', e);
+  }
+}
+
+// Fisher formula: realRate = (1 + nominal/100) / (1 + inflation/100) - 1
+function toRealRate(nominalPct) {
+  if (!_inflationData || nominalPct == null) return nominalPct;
+  const ipca12m = _inflationData.acum12m;
+  const real = ((1 + nominalPct / 100) / (1 + ipca12m / 100) - 1) * 100;
+  return Math.round(real * 100) / 100;
+}
+
+function displayRate(nominalPct) {
+  if (!_showReal || nominalPct == null) return nominalPct;
+  const result = toRealRate(nominalPct);
+  return result;
+}
+
+function rateLabel() {
+  return _showReal ? 'Rend. real' : 'Rend. anual';
+}
+
+function setupRealToggle() {
+  const btn = document.getElementById('real-toggle');
+  if (!btn) return;
+  btn.addEventListener('click', async () => {
+    if (!_inflationData) {
+      console.log('Loading inflation data...');
+      await loadInflationData();
+    }
+    _showReal = !_showReal;
+    console.log('Toggle:', _showReal ? 'REAL' : 'NOMINAL', '| IPCA data:', _inflationData ? _inflationData.acum12m + '%' : 'NULL');
+    btn.classList.toggle('active', _showReal);
+    btn.innerHTML = _showReal
+      ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Taxa Real'
+      : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Nominal';
+    // Update the IPCA badge
+    const badge = document.getElementById('ipca-badge');
+    if (badge && _inflationData) {
+      badge.textContent = `IPCA 12m: ${_inflationData.acum12m.toFixed(2)}%`;
+      badge.style.display = _showReal ? '' : 'none';
+    }
+    // Re-render active sections
+    document.dispatchEvent(new CustomEvent('ratemode-changed'));
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   setupThemeToggle();
+  setupRealToggle();
+  loadInflationData();
   setupTabs();
   loadMundo();
   loadHotMovers();
@@ -220,6 +283,8 @@ function formatPatrimonio(value) {
 
 // ─── CDBs Section ───
 
+let _cdbCache = null;
+
 async function loadCDBs() {
   const container = document.getElementById('cdbs-list');
   container.innerHTML = `<div class="loading"><div class="loading-spinner"></div><p>Carregando CDBs...</p></div>`;
@@ -236,7 +301,6 @@ async function loadCDBs() {
     const items = config.cdbs.filter(c => c.ativo).map(item => {
       let rendAnual;
       if (item.tipo === 'Poupança') {
-        // Poupança: when Selic > 8.5%, yield = 0.5% monthly + TR ≈ 70% Selic
         rendAnual = Math.round(selicMeta * 0.7 * 100) / 100;
       } else {
         rendAnual = Math.round((cdiAnual * item.cdi_pct / 100) * 100) / 100;
@@ -245,36 +309,54 @@ async function loadCDBs() {
     });
 
     items.sort((a, b) => b.rendAnual - a.rendAnual);
-
-    container.innerHTML = '';
-    if (items.length === 0) {
-      container.innerHTML = '<div class="loading">Nenhum dado disponível.</div>';
-      return;
-    }
-
-    const cardItems = items.map(item => {
-      const card = createCard({
-        logo: item.logo,
-        logoBg: item.logo_bg,
-        name: item.nome,
-        tags: [
-          { text: item.tipo, type: 'category' },
-          { text: item.rentabilidade, type: 'limit' },
-        ],
-        rate: `${item.rendAnual.toFixed(2)}%`,
-        rateLabel: 'Rend. anual',
-        rateDate: `CDI a.a.: ${cdiAnual.toFixed(2)}%`
-      });
-      container.appendChild(card);
-      return { tna: item.rendAnual, nome: item.nome, logo: item.logo, logoBg: item.logo_bg };
-    });
-
-    renderRendimentosChart(cardItems);
+    _cdbCache = { items, cdiAnual };
+    renderCDBs();
   } catch (e) {
     console.error('Error loading CDBs:', e);
     container.innerHTML = '<div class="loading">Erro ao carregar dados.</div>';
   }
 }
+
+function renderCDBs() {
+  if (!_cdbCache) return;
+  const { items, cdiAnual } = _cdbCache;
+  const container = document.getElementById('cdbs-list');
+  container.innerHTML = '';
+
+  if (items.length === 0) {
+    container.innerHTML = '<div class="loading">Nenhum dado disponível.</div>';
+    return;
+  }
+
+  const ipcaNote = _showReal && _inflationData
+    ? ` · IPCA 12m: ${_inflationData.acum12m.toFixed(2)}%`
+    : '';
+
+  const cardItems = items.map(item => {
+    const shown = displayRate(item.rendAnual);
+    const card = createCard({
+      logo: item.logo,
+      logoBg: item.logo_bg,
+      name: item.nome,
+      tags: [
+        { text: item.tipo, type: 'category' },
+        { text: item.rentabilidade, type: 'limit' },
+      ],
+      rate: `${shown.toFixed(2)}%`,
+      rateLabel: rateLabel(),
+      rateDate: `CDI a.a.: ${cdiAnual.toFixed(2)}%${ipcaNote}`
+    });
+    container.appendChild(card);
+    return { tna: shown, nome: item.nome, logo: item.logo, logoBg: item.logo_bg };
+  });
+
+  renderRendimentosChart(cardItems);
+}
+
+document.addEventListener('ratemode-changed', () => {
+  renderCDBs();
+  renderFundosIfCached();
+});
 
 function renderRendimentosChart(items, containerId) {
   const container = document.getElementById(containerId || 'rendimentos-chart');
@@ -513,9 +595,29 @@ async function loadFundos() {
       return (b.rendAnual || 0) - (a.rendAnual || 0);
     });
 
+    _fundosCache = { items, cvmMonth: cvmRes.month };
+    renderFundos();
+  } catch (e) {
+    console.error('Error loading fundos:', e);
+    container.innerHTML = '<div class="loading">Erro ao carregar fundos.</div>';
+  }
+}
+
+let _fundosCache = null;
+
+function renderFundosIfCached() {
+  if (_fundosCache) renderFundos();
+}
+
+function renderFundos() {
+  if (!_fundosCache) return;
+  const { items, cvmMonth } = _fundosCache;
+  const container = document.getElementById('fundos-list');
+
     container.innerHTML = '';
     items.forEach(fundo => {
-      const rateStr = fundo.rendAnual != null ? `${fundo.rendAnual.toFixed(2)}%` : '—';
+      const shown = fundo.rendAnual != null ? displayRate(fundo.rendAnual) : null;
+      const rateStr = shown != null ? `${shown.toFixed(2)}%` : '—';
       const dateStr = fundo.dataUltima ? `Cota em ${fundo.dataUltima}` : 'Dados da CVM';
       const plStr = fundo.pl ? formatPatrimonio(fundo.pl) : '';
       const tags = [{ text: fundo.categoria, type: 'category' }];
@@ -529,7 +631,7 @@ async function loadFundos() {
         entity: fundo.entidade,
         tags,
         rate: rateStr,
-        rateLabel: 'Rend. anual',
+        rateLabel: rateLabel(),
         rateDate: dateStr
       });
 
@@ -563,19 +665,17 @@ async function loadFundos() {
     });
 
     // Show source info
-    if (cvmRes.month) {
+    if (cvmMonth) {
       const sourceP = document.createElement('p');
       sourceP.className = 'section-source';
-      sourceP.textContent = `Fonte: CVM Informe Diário (${cvmRes.month}). Rentabilidade anualizada (base 252 dias úteis).`;
+      sourceP.textContent = `Fonte: CVM Informe Diário (${cvmMonth}). Rentabilidade anualizada (base 252 dias úteis).`;
       container.appendChild(sourceP);
     }
-  } catch (e) {
-    console.error('Error loading fundos:', e);
-    container.innerHTML = '<div class="loading">Erro ao carregar fundos.</div>';
-  }
 }
 
 // ─── Títulos Públicos (Tesouro Direto) ───
+
+let _titulosCache = null;
 
 async function loadTitulos() {
   const prefixadoContainer = document.getElementById('prefixado-list');
@@ -598,20 +698,49 @@ async function loadTitulos() {
     const ipcas = bonds.filter(b => b.indexador === 'IPCA' || b.tipo === 'NTN-B' || b.tipo === 'NTN-B Principal');
     const selics = bonds.filter(b => b.indexador === 'SELIC' || b.tipo === 'LFT');
 
-    renderTituloTable(prefixados, prefixadoContainer, 'Taxa a.a.', '#00c853');
-    renderTituloTable(ipcas, ipcaContainer, 'IPCA +', '#2979ff');
-    renderTituloTable(selics, selicContainer, 'Selic +', '#ffd600');
-
-    // Scatter plots
-    renderTituloScatter(prefixados, 'prefixado-scatter', 'Prefixado', '#00c853');
-    renderTituloScatter(ipcas, 'ipca-scatter', 'IPCA+', '#2979ff');
+    _titulosCache = { prefixados, ipcas, selics };
+    renderTitulos();
   } catch (e) {
     console.error('Error loading títulos:', e);
     prefixadoContainer.innerHTML = '<div class="loading">Erro ao carregar títulos.</div>';
   }
 }
 
-function renderTituloTable(bonds, container, rateHeader, accentColor) {
+function renderTitulos() {
+  if (!_titulosCache) return;
+  const { prefixados, ipcas, selics } = _titulosCache;
+
+  const prefixadoContainer = document.getElementById('prefixado-list');
+  const ipcaContainer = document.getElementById('ipca-list');
+  const selicContainer = document.getElementById('selic-list');
+
+  const rateHeaderPrefix = _showReal ? 'Taxa Real' : 'Taxa a.a.';
+
+  renderTituloTable(prefixados, prefixadoContainer, rateHeaderPrefix, '#00c853');
+  // IPCA+ bonds: taxa already IS the real rate, so don't convert
+  renderTituloTable(ipcas, ipcaContainer, 'IPCA +', '#2979ff', true);
+  renderTituloTable(selics, selicContainer, 'Selic +', '#ffd600', true);
+
+  // Scatter plots — destroy existing charts first
+  destroyChartOnCanvas('prefixado-scatter');
+  destroyChartOnCanvas('ipca-scatter');
+  renderTituloScatter(prefixados, 'prefixado-scatter', 'Prefixado', '#00c853');
+  renderTituloScatter(ipcas, 'ipca-scatter', 'IPCA+', '#2979ff', true);
+}
+
+function destroyChartOnCanvas(canvasId) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  const existing = Chart.getChart(canvas);
+  if (existing) existing.destroy();
+}
+
+document.addEventListener('ratemode-changed', () => {
+  renderTitulos();
+  renderDebenturesIfCached();
+});
+
+function renderTituloTable(bonds, container, rateHeader, accentColor, skipRealConversion) {
   if (!bonds || bonds.length === 0) {
     container.innerHTML = '<div class="loading">Nenhum título disponível nesta categoria.</div>';
     return;
@@ -620,12 +749,20 @@ function renderTituloTable(bonds, container, rateHeader, accentColor) {
   // Sort by maturity
   bonds.sort((a, b) => new Date(a.vencimento) - new Date(b.vencimento));
 
-  const bestRate = Math.max(...bonds.map(b => b.taxaCompra));
+  const convertRate = (rate) => {
+    if (rate == null) return null;
+    if (skipRealConversion || !_showReal) return rate;
+    return toRealRate(rate);
+  };
+
+  const bestRate = Math.max(...bonds.map(b => convertRate(b.taxaCompra) || 0));
   const rows = bonds.map(b => {
     const vto = new Date(b.vencimento);
     const vtoStr = `${String(vto.getDate()).padStart(2, '0')}/${String(vto.getMonth() + 1).padStart(2, '0')}/${vto.getFullYear()}`;
     const dias = Math.max(1, Math.round((vto - new Date()) / (1000 * 60 * 60 * 24)));
-    const isHighlighted = b.taxaCompra === bestRate ? ' highlighted-row' : '';
+    const taxaC = convertRate(b.taxaCompra);
+    const taxaV = convertRate(b.taxaVenda);
+    const isHighlighted = taxaC === bestRate ? ' highlighted-row' : '';
     const tipoShort = b.tipo || '—';
 
     // Shorten long names
@@ -639,10 +776,12 @@ function renderTituloTable(bonds, container, rateHeader, accentColor) {
       <td class="mono">R$ ${b.precoVenda ? b.precoVenda.toFixed(2) : '—'}</td>
       <td>${dias}</td>
       <td>${vtoStr}</td>
-      <td class="lecap-tir">${b.taxaCompra ? b.taxaCompra.toFixed(2) + '%' : '—'}</td>
-      <td class="lecap-tir">${b.taxaVenda ? b.taxaVenda.toFixed(2) + '%' : '—'}</td>
+      <td class="lecap-tir">${taxaC != null ? taxaC.toFixed(2) + '%' : '—'}</td>
+      <td class="lecap-tir">${taxaV != null ? taxaV.toFixed(2) + '%' : '—'}</td>
     </tr>`;
   }).join('');
+
+  const headerSuffix = _showReal && !skipRealConversion ? ' <span style="font-size:0.7em;opacity:0.7">(real)</span>' : '';
 
   container.innerHTML = `
     <div class="lecap-table-wrap">
@@ -654,8 +793,8 @@ function renderTituloTable(bonds, container, rateHeader, accentColor) {
             <th>Preço Venda</th>
             <th>Dias</th>
             <th>Vencimento</th>
-            <th>Taxa Compra</th>
-            <th>Taxa Venda</th>
+            <th>Taxa Compra${headerSuffix}</th>
+            <th>Taxa Venda${headerSuffix}</th>
           </tr>
         </thead>
         <tbody>${rows}</tbody>
@@ -676,16 +815,23 @@ function renderTituloTable(bonds, container, rateHeader, accentColor) {
   });
 }
 
-function renderTituloScatter(bonds, canvasId, label, color) {
+function renderTituloScatter(bonds, canvasId, label, color, skipRealConversion) {
   const canvas = document.getElementById(canvasId);
   if (!canvas || typeof Chart === 'undefined' || !bonds || bonds.length === 0) return;
 
   const textColor = '#555555';
   const gridColor = '#1a1a1a';
 
+  const convertRate = (rate) => {
+    if (rate == null) return null;
+    if (skipRealConversion || !_showReal) return rate;
+    return toRealRate(rate);
+  };
+
   const points = bonds.map(b => {
     const dias = Math.max(1, Math.round((new Date(b.vencimento) - new Date()) / (1000 * 60 * 60 * 24)));
-    return { x: dias, y: b.taxaCompra, nome: b.nome };
+    const y = convertRate(b.taxaCompra);
+    return { x: dias, y, nome: b.nome };
   }).filter(p => p.y > 0);
 
   if (points.length < 2) return;
@@ -861,8 +1007,8 @@ function openTituloCalculator(bond) {
       // Prefixado: valor * (1 + taxa/100)^(dias/365)
       rendBruto = valor * (Math.pow(1 + taxa / 100, dias / 365) - 1);
     } else if (bond.indexador === 'IPCA') {
-      // IPCA+: approximate with taxa real + IPCA estimado (5%)
-      const ipcaEst = 5;
+      // IPCA+: approximate with taxa real + actual IPCA 12m (or estimate 5%)
+      const ipcaEst = _inflationData ? _inflationData.acum12m : 5;
       const taxaTotal = ((1 + taxa / 100) * (1 + ipcaEst / 100) - 1) * 100;
       rendBruto = valor * (Math.pow(1 + taxaTotal / 100, dias / 365) - 1);
     } else {
@@ -896,6 +1042,10 @@ function openTituloCalculator(bond) {
         <span>Rentabilidade líquida</span>
         <span class="calc-result-value">${valor > 0 ? ((rendLiq / valor) * 100).toFixed(2) : 0}%</span>
       </div>
+      ${_inflationData ? `<div class="calc-result-row" style="border-top:1px solid var(--border);padding-top:8px;margin-top:4px">
+        <span>Rentab. real (- IPCA ${_inflationData.acum12m.toFixed(1)}%)</span>
+        <span class="calc-result-value ${valor > 0 && toRealRate((rendLiq / valor) * 100) > 0 ? 'positive' : 'negative'}">${valor > 0 ? toRealRate((rendLiq / valor) * 100).toFixed(2) : 0}%</span>
+      </div>` : ''}
     `;
   }
 
@@ -906,6 +1056,8 @@ function openTituloCalculator(bond) {
 }
 
 // ─── Debêntures Section ───
+
+let _debenturesCache = null;
 
 async function loadDebentures() {
   const container = document.getElementById('debentures-list');
@@ -922,6 +1074,22 @@ async function loadDebentures() {
 
     // Sort by spread descending
     debs.sort((a, b) => b.spread - a.spread);
+    _debenturesCache = debs;
+    renderDebentures();
+  } catch (e) {
+    console.error('Error loading debêntures:', e);
+    container.innerHTML = '<div class="loading">Erro ao carregar debêntures.</div>';
+  }
+}
+
+function renderDebenturesIfCached() {
+  if (_debenturesCache) renderDebentures();
+}
+
+function renderDebentures() {
+  if (!_debenturesCache) return;
+  const debs = _debenturesCache;
+  const container = document.getElementById('debentures-list');
 
     const bestSpread = Math.max(...debs.map(d => d.spread));
     const rows = debs.map(d => {
@@ -941,6 +1109,10 @@ async function loadDebentures() {
       </tr>`;
     }).join('');
 
+    const realNote = _showReal && _inflationData
+      ? `<p class="section-source" style="margin-top:8px;color:var(--accent)">Modo taxa real ativo — spreads de debêntures são relativos ao indexador (CDI ou IPCA), não são taxas absolutas.</p>`
+      : '';
+
     container.innerHTML = `
       <div class="lecap-table-wrap">
         <table class="lecap-table">
@@ -956,17 +1128,14 @@ async function loadDebentures() {
           </thead>
           <tbody>${rows}</tbody>
         </table>
-      </div>`;
+      </div>${realNote}`;
 
     const table = container.querySelector('.lecap-table');
     if (table) makeSortable(table);
 
     // Scatter plot: spread vs dias
+    destroyChartOnCanvas('debentures-scatter');
     renderDebentureScatter(debs);
-  } catch (e) {
-    console.error('Error loading debêntures:', e);
-    container.innerHTML = '<div class="loading">Erro ao carregar debêntures.</div>';
-  }
 }
 
 function renderDebentureScatter(debs) {

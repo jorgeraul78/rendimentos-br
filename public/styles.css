@@ -975,6 +975,55 @@ body {
 }
 
 /* Subnav */
+
+/* Real-rate toggle */
+.real-toggle {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 10px;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-family: 'Geist', sans-serif;
+  font-weight: 500;
+  line-height: 1;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  color: var(--text-secondary);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.real-toggle:hover {
+  background: var(--border);
+  color: var(--text);
+}
+
+.real-toggle.active {
+  background: var(--accent-light);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.real-toggle svg {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.ipca-badge {
+  font-size: 0.65rem;
+  font-family: 'Geist Mono', monospace;
+  color: var(--accent);
+  background: var(--accent-light);
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  padding: 2px 6px;
+  white-space: nowrap;
+  opacity: 0.85;
+}
+
+/* Subnav */
 .subnav {
   background: var(--card-bg);
   border-bottom: 1px solid var(--border);

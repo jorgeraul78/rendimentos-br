@@ -52,6 +52,11 @@
   status = 200
 
 [[redirects]]
+  from = "/api/inflacao"
+  to = "/.netlify/functions/inflacao"
+  status = 200
+
+[[redirects]]
   from = "/api/config"
   to = "/config.json"
   status = 200

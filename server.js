@@ -169,6 +169,51 @@ app.get('/api/bcb', async (req, res) => {
 });
 
 // --- Cotações (ticker strip) ---
+
+// --- Inflação (IPCA for real-rate calculations) ---
+app.get('/api/inflacao', async (req, res) => {
+  try {
+    const ipcaData = await fetchJSON('https://api.bcb.gov.br/dados/serie/bcdata.sgs.433/dados/ultimos/12?formato=json');
+    if (!Array.isArray(ipcaData) || ipcaData.length === 0) {
+      return res.status(502).json({ error: 'No IPCA data from BCB' });
+    }
+
+    const monthly = ipcaData.map(item => ({
+      date: item.data,
+      value: parseFloat(String(item.valor).replace(',', '.'))
+    }));
+
+    function accumulate(months) {
+      const slice = monthly.slice(-months);
+      let acum = 1;
+      for (const m of slice) acum *= (1 + m.value / 100);
+      return Math.round((acum - 1) * 10000) / 100;
+    }
+
+    function annualize(acumPct, months) {
+      return Math.round((Math.pow(1 + acumPct / 100, 12 / months) - 1) * 10000) / 100;
+    }
+
+    const acum3m = accumulate(3);
+    const acum6m = accumulate(6);
+    const acum12m = accumulate(12);
+    const ultimo = monthly[monthly.length - 1];
+
+    res.json({
+      ultimo: { date: ultimo.date, value: ultimo.value },
+      acum3m, acum6m, acum12m,
+      anualizado3m: annualize(acum3m, 3),
+      anualizado6m: annualize(acum6m, 6),
+      anualizado12m: acum12m,
+      monthly,
+      updated: new Date().toISOString(),
+    });
+  } catch (err) {
+    console.error('Inflacao proxy error:', err.message);
+    res.status(502).json({ error: 'Failed to fetch inflation data' });
+  }
+});
+
 app.get('/api/cotacoes', async (req, res) => {
   try {
     const [dolarRes, ibovRes, btcRes, cdiRes, selicRes] = await Promise.allSettled([
